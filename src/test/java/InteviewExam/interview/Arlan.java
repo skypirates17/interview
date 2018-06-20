@@ -45,11 +45,11 @@ public class Arlan {
 			}
 	    });
 		
-
+		// set incrementing numbering to photos per location
 		int photoCtr = 1;
 		Photo firstPhoto = lstPhoto.get(0);
 		String locationCount = this.getRecordCount(lstPhoto, firstPhoto.getLocation()).toString();
-		firstPhoto.setCounter(photoCtr++);
+		firstPhoto.setCounterPerLocation(photoCtr++);
 		firstPhoto.setPhotoCountPerLocation(locationCount);
 		
 		Photo comparePhoto = firstPhoto;
@@ -62,7 +62,7 @@ public class Arlan {
 				locationCount = this.getRecordCount(lstPhoto, photo.getLocation()).toString();
 			}
 			
-			photo.setCounter(photoCtr++);
+			photo.setCounterPerLocation(photoCtr++);
 			photo.setPhotoCountPerLocation(locationCount);
 			comparePhoto = photo;
 		}
@@ -76,9 +76,10 @@ public class Arlan {
 			}
 	    });
 		
+		// print new file name
 		for (Photo photo : lstPhoto) {
 			String location = photo.getLocation();
-			String countSuffix = String.format("%0" + photo.getPhotoCountPerLocation().toString().length() + "d", photo.getCounter());
+			String countSuffix = String.format("%0" + photo.getPhotoCountPerLocation().toString().length() + "d", photo.getCounterPerLocation());
 			String fileNameExtension = photo.getFileName().substring(photo.getFileName().lastIndexOf("."));
 			
 		    System.out.println(location+countSuffix+fileNameExtension);
@@ -109,7 +110,7 @@ class Photo {
 	
 	private Integer originalOrder;
 	
-	private Integer counter;
+	private Integer counterPerLocation;
 	
 	private String photoCountPerLocation;
 
@@ -121,12 +122,12 @@ class Photo {
 		this.photoCountPerLocation = photoCountPerLocation;
 	}
 
-	public Integer getCounter() {
-		return counter;
+	public Integer getCounterPerLocation() {
+		return counterPerLocation;
 	}
 
-	public void setCounter(Integer counter) {
-		this.counter = counter;
+	public void setCounterPerLocation(Integer counterPerLocation) {
+		this.counterPerLocation = counterPerLocation;
 	}
 
 	public Integer getOriginalOrder() {
@@ -168,7 +169,7 @@ class Photo {
 		sb.append("location=").append(this.location).append(", ");
 		sb.append("dateTime=").append(this.dateTime).append(", ");
 		sb.append("originalOrder=").append(this.originalOrder).append(", ");
-		sb.append("counter=").append(this.counter).append(", ");
+		sb.append("counterPerLocation=").append(this.counterPerLocation).append(", ");
 		sb.append("photoCountPerLocation=").append(this.photoCountPerLocation).append("}");
 		return sb.toString();
 	}
