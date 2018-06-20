@@ -24,7 +24,7 @@ public class Arlan {
 		    photo.setFileName(input2[0].trim());
 		    photo.setLocation(input2[1].trim());
 		    photo.setDateTime(input2[2].trim());
-		    photo.setOrder(i+1);
+		    photo.setOriginalOrder(i+1);
 		    lstPhoto.add(photo);
 		}
 		
@@ -43,17 +43,14 @@ public class Arlan {
 	            String y2 = o2.getDateTime();
 	            return y1.compareTo(y2);
 			}
-
 	    });
 		
-		System.out.println("\n\n=======>New File Sorting");
+
 		int photoCtr = 1;
-		
 		Photo firstPhoto = lstPhoto.get(0);
-		//String fileNameExtension = firstPhoto.getFileName().substring(firstPhoto.getFileName().lastIndexOf("."));
-		//firstPhoto.setNewFileName(firstPhoto.getLocation( )+ photoCtr++ + fileNameExtension);
-		firstPhoto.setCounter(String.valueOf(photoCtr++));
-		firstPhoto.setPhotoCountPerLocation(String.valueOf(photoCtr));
+		String locationCount = this.getRecordCount(lstPhoto, firstPhoto.getLocation()).toString();
+		firstPhoto.setCounter(photoCtr++);
+		firstPhoto.setPhotoCountPerLocation(locationCount);
 		
 		Photo comparePhoto = firstPhoto;
 		for (int i = 1 ; i <lstPhoto.size(); i++) {
@@ -62,26 +59,43 @@ public class Arlan {
 			if (!photo.getLocation().equalsIgnoreCase(comparePhoto.getLocation())) {
 				// reset the counter if the last and current photo is not same location
 				photoCtr = 1;
+				locationCount = this.getRecordCount(lstPhoto, photo.getLocation()).toString();
 			}
-			//fileNameExtension = photo.getFileName().substring(photo.getFileName().lastIndexOf("."));
-			//photo.setNewFileName(photo.getLocation() + photoCtr++ + fileNameExtension);
 			
-			photo.setCounter(String.valueOf(photoCtr++));
-			photo.setPhotoCountPerLocation(String.valueOf(photoCtr));
+			photo.setCounter(photoCtr++);
+			photo.setPhotoCountPerLocation(locationCount);
 			comparePhoto = photo;
 		}
 		
 		// sort back to original order
 		Collections.sort(lstPhoto, new Comparator<Photo>() {
 			public int compare(Photo o1, Photo o2) {
-	            Integer y1 = o1.getOrder();
-	            Integer y2 = o2.getOrder();
+	            Integer y1 = o1.getOriginalOrder();
+	            Integer y2 = o2.getOriginalOrder();
 	            return y1.compareTo(y2);
 			}
 	    });
+		
 		for (Photo photo : lstPhoto) {
-		    System.out.println(photo);
+			String location = photo.getLocation();
+			String countSuffix = String.format("%0" + photo.getPhotoCountPerLocation().toString().length() + "d", photo.getCounter());
+			String fileNameExtension = photo.getFileName().substring(photo.getFileName().lastIndexOf("."));
+			
+		    System.out.println(location+countSuffix+fileNameExtension);
 		}
+	}
+	
+	// panget na code 
+	public Integer getRecordCount(List<Photo> lstPhoto, String location) {
+		Integer count = 0;
+		for (int i = 0; i < lstPhoto.size(); i++) {
+			Photo photo = lstPhoto.get(i);
+			
+			if (location.equalsIgnoreCase(photo.getLocation())) {
+				count++;
+			}
+		}
+		return count;
 	}
 }
 
@@ -93,9 +107,9 @@ class Photo {
 
 	private String dateTime;
 	
-	private Integer order;
+	private Integer originalOrder;
 	
-	private String counter;
+	private Integer counter;
 	
 	private String photoCountPerLocation;
 
@@ -107,20 +121,20 @@ class Photo {
 		this.photoCountPerLocation = photoCountPerLocation;
 	}
 
-	public String getCounter() {
+	public Integer getCounter() {
 		return counter;
 	}
 
-	public void setCounter(String counter) {
+	public void setCounter(Integer counter) {
 		this.counter = counter;
 	}
 
-	public Integer getOrder() {
-		return order;
+	public Integer getOriginalOrder() {
+		return originalOrder;
 	}
 
-	public void setOrder(Integer order) {
-		this.order = order;
+	public void setOriginalOrder(Integer originalOrder) {
+		this.originalOrder = originalOrder;
 	}
 
 	public String getFileName() {
@@ -153,7 +167,7 @@ class Photo {
 		sb.append("{").append("fileName=").append(this.fileName).append(", ");
 		sb.append("location=").append(this.location).append(", ");
 		sb.append("dateTime=").append(this.dateTime).append(", ");
-		sb.append("order=").append(this.order).append(", ");
+		sb.append("originalOrder=").append(this.originalOrder).append(", ");
 		sb.append("counter=").append(this.counter).append(", ");
 		sb.append("photoCountPerLocation=").append(this.photoCountPerLocation).append("}");
 		return sb.toString();
